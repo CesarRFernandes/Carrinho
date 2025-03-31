@@ -37,10 +37,7 @@
         this.itens = [];
         this.adicionar = function (item) {
           this.itens.push(item);
-
-          var resumo = document.querySelector("#resumo");
-          resumo.textContent =
-            "valor total = " + this.getValorTotal().toFixed(2);
+          atualizarResumo();
         };
         this.getValorTotal = function () {
           var total = 0.0;
@@ -63,6 +60,7 @@
 
       var produtos = criarProdutos();
       var carrinho = new Carrinho();
+      atualizarResumo(); // Inicializa o resumo
 
       function adicionarAoCesto(idProduto) {
         var regexpId = /produto(\d)+/;
@@ -72,7 +70,10 @@
         for (var i = 0; i < produtos.length; i++) {
           var produto = produtos[i];
           if (produto.getId() === id) {
-            carrinho.adicionar(new Item(produto, 1));
+            var quantidade = adicionarQuantidadeItem();
+            if (quantidade > 0) {
+              carrinho.adicionar(new Item(produto, quantidade));
+            }
             return;
           }
         }
@@ -113,8 +114,29 @@
       desenharProdutos(produtos);
 
       function adicionarQuantidadeItem() {
-        const quantidade = prompt("Digite a quantidade: ");
+        let quantidade;
+        do {
+          quantidade = prompt("Digite a quantidade: ");
+          if (quantidade === null) {
+            // Usuário cancelou
+            return 0;
+          }
+          quantidade = parseInt(quantidade);
+        } while (isNaN(quantidade) || quantidade <= 0);
         return quantidade;
+      }
+
+      function atualizarResumo() {
+        var resumo = document.querySelector("#resumo");
+        var texto = "Itens na cesta:<br>";
+        for (var i = 0; i < carrinho.itens.length; i++) {
+          var item = carrinho.itens[i];
+          texto += `${item.produto.getDescricao()} - Quantidade: ${
+            item.quantidade
+          }`;
+        }
+        texto += `<br>Valor total: R$ ${carrinho.getValorTotal().toFixed(2)}`;
+        resumo.innerHTML = texto;
       }
     </script>
   </body>
