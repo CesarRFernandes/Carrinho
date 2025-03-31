@@ -133,7 +133,7 @@
           var item = carrinho.itens[i];
           texto += `${item.produto.getDescricao()} - Quantidade: ${
             item.quantidade
-          }`;
+          }<br>`;
         }
         texto += `<br>Valor total: R$ ${carrinho.getValorTotal().toFixed(2)}`;
         resumo.innerHTML = texto;
